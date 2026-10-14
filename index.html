@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  个人主页 · 单文件版（HTML + CSS，没有外部依赖，断网也能打开）
+  作业：MF70050.01 作业1 · 注册 GitHub/CNB，发布一个网页到 Vercel/EdgeOne
+  ------------------------------------------------------------
+  需要改的地方，全部用「改这里」注释标出来了，
+  直接在记事本 / VS Code 里搜索「改这里」就能逐个替换。
+  ============================================================
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>李思佳 · 个人主页</title>            <!-- 改这里：浏览器标签上的标题 -->
+<meta name="description" content="李思佳的个人主页 —— 复旦大学经济学院，关注数据分析与人工智能">
+<!-- 改这里：浏览器标签上的小图标（把里面的「李」换成你的姓即可） -->
+<link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%235eead4'/><text x='16' y='23' font-size='19' font-family='sans-serif' text-anchor='middle' fill='%23061218'>李</text></svg>">
+<style>
+  /* ===== 主题色：想换配色只改这 4 行 ===== */
+  :root{
+    --bg-1:#070b18;          /* 背景最深色 */
+    --bg-2:#111a35;          /* 背景次深色 */
+    --accent:#5eead4;        /* 主强调色（青绿） */
+    --accent-2:#818cf8;      /* 次强调色（紫蓝） */
+    --text:#e8ecf6;
+    --muted:#98a3bd;
+    --card:rgba(255,255,255,.055);
+    --line:rgba(255,255,255,.12);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,"Segoe UI",sans-serif;
+    background:var(--bg-1);
+    color:var(--text);
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  /* 背景光斑 */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-2;
+    background:
+      radial-gradient(900px 600px at 12% -10%, rgba(94,234,212,.20), transparent 60%),
+      radial-gradient(800px 600px at 92% 8%, rgba(129,140,248,.22), transparent 60%),
+      linear-gradient(160deg,var(--bg-1) 0%,var(--bg-2) 55%,var(--bg-1) 100%);
+  }
+  body::after{ /* 细网格，科技感 */
+    content:"";position:fixed;inset:0;z-index:-1;opacity:.35;
+    background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+    background-size:56px 56px;
+    mask-image:radial-gradient(circle at 50% 0%,#000 0%,transparent 78%);
+    -webkit-mask-image:radial-gradient(circle at 50% 0%,#000 0%,transparent 78%);
+  }
+  .wrap{width:100%;max-width:940px;margin:0 auto;padding:0 22px}
+
+  /* ===== 顶部导航 ===== */
+  nav{
+    position:sticky;top:0;z-index:10;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    background:rgba(7,11,24,.72);border-bottom:1px solid var(--line);
+  }
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{font-weight:700;letter-spacing:.14em;font-size:15px}
+  .logo span{background:linear-gradient(90deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  nav ul{display:flex;gap:22px;list-style:none;font-size:14px}
+  nav a{color:var(--muted);text-decoration:none;transition:color .2s}
+  nav a:hover{color:var(--text)}
+  @media (max-width:560px){ nav ul{display:none} }
+
+  /* ===== 首屏 ===== */
+  header{padding:78px 0 62px;text-align:center}
+  .avatar{
+    width:112px;height:112px;margin:0 auto 22px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:44px;font-weight:700;color:#04121a;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    box-shadow:0 0 0 1px rgba(255,255,255,.16), 0 18px 50px rgba(94,234,212,.28);
+  }
+  h1{
+    font-size:clamp(30px,6vw,46px);line-height:1.25;letter-spacing:.02em;
+    background:linear-gradient(90deg,#fff 10%,var(--accent) 55%,var(--accent-2) 95%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .tagline{color:var(--muted);margin-top:12px;font-size:clamp(14px,2.6vw,17px)}
+  .btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+  .btn{
+    padding:11px 26px;border-radius:999px;text-decoration:none;font-size:15px;
+    border:1px solid var(--line);color:var(--text);background:var(--card);
+    transition:transform .18s, box-shadow .18s, background .18s;
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.35)}
+  .btn.primary{
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#05121a;font-weight:600;border-color:transparent;
+  }
+
+  /* ===== 区块 ===== */
+  section{padding:44px 0;border-top:1px solid var(--line)}
+  h2{
+    font-size:22px;letter-spacing:.04em;margin-bottom:20px;
+    display:flex;align-items:center;gap:12px;
+  }
+  h2::before{
+    content:"";width:5px;height:22px;border-radius:3px;
+    background:linear-gradient(180deg,var(--accent),var(--accent-2));
+  }
+  p{color:#cfd7e8}
+  p + p{margin-top:12px}
+  strong{color:#fff;font-weight:600}
+
+  .tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+  .tag{
+    padding:7px 16px;border-radius:999px;font-size:13.5px;
+    border:1px solid var(--line);background:var(--card);color:#cbd5e8;
+  }
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:6px}
+  .card{
+    padding:22px;border-radius:16px;border:1px solid var(--line);background:var(--card);
+    transition:transform .2s, border-color .2s, box-shadow .2s;
+  }
+  .card:hover{
+    transform:translateY(-4px);border-color:rgba(94,234,212,.5);
+    box-shadow:0 18px 40px rgba(0,0,0,.4);
+  }
+  .card .ico{display:block;color:var(--accent)}
+  .card .ico svg{width:26px;height:26px;display:block}
+  .card h3{font-size:16.5px;margin:10px 0 6px;color:#fff}
+  .card p{font-size:14px;color:var(--muted)}
+
+  .contact{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
+  .contact a{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:12px 20px;border-radius:12px;text-decoration:none;
+    border:1px solid var(--line);background:var(--card);color:var(--text);font-size:14.5px;
+    transition:border-color .2s, transform .2s;
+  }
+  .contact a:hover{border-color:rgba(129,140,248,.6);transform:translateY(-2px)}
+  .contact a svg{width:18px;height:18px;color:var(--accent);flex:none}
+
+  footer{padding:38px 0 52px;text-align:center;color:#6f7c96;font-size:13.5px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo">MY<span>·</span>PAGE</div>   <!-- 改这里：左上角标志文字 -->
+    <ul>
+      <li><a href="#about">关于我</a></li>
+      <li><a href="#skills">技能</a></li>
+      <li><a href="#projects">课程项目</a></li>
+      <li><a href="#contact">联系我</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <!-- 改这里：头像里显示的字（一般用姓，如 李）；想放照片就把这个 div 换成 <img src="me.jpg" class="avatar" alt="头像"> -->
+    <div class="avatar">李</div>
+    <h1>李思佳</h1>                                        <!-- 改这里：你的名字 -->
+    <p class="tagline">复旦大学 · 经济学院 · 关注数据分析与人工智能</p>  <!-- 改这里：一句话介绍 -->
+    <div class="btns">
+      <a class="btn primary" href="#about">了解更多</a>
+      <a class="btn" href="mailto:sijiali@fudan.edu.cn">联系我</a>  <!-- 改这里：你的邮箱 -->
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="about">
+    <h2>关于我</h2>
+    <p>
+      你好，我是<strong>李思佳</strong>，<strong>复旦大学经济学院</strong>的学生。
+      在学习经济学的同时，我逐渐对<strong>数据分析与人工智能</strong>产生了兴趣，
+      希望用代码把抽象的经济问题变成可观察、可验证的结论。
+    </p>
+    <p>
+      这门课让我第一次把自己的网页发布到公网 —— 从注册账号、建仓库，到部署上线，
+      全程没写一行后端代码。下面是我的一些学习笔记和课程项目。
+    </p>
+  </section>
+
+  <section id="skills">
+    <h2>技能与兴趣</h2>
+    <div class="tags">
+      <span class="tag">经济学</span>          <!-- 改这里：换成你自己的标签，复制一行就是一个新标签 -->
+      <span class="tag">Python</span>
+      <span class="tag">数据分析</span>
+      <span class="tag">大模型应用</span>
+      <span class="tag">HTML / CSS</span>
+    </div>
+  </section>
+
+  <section id="projects">
+    <h2>课程项目</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.5 4 5.6 4 9s-1.4 6.5-4 9c-2.6-2.5-4-5.6-4-9s1.4-6.5 4-9z"/></svg></div>
+        <h3>个人主页（本项目）</h3>
+        <p>用一份 index.html 手写完成，通过 CNB 仓库托管、EdgeOne Pages 发布到公网。</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20h16"/><rect x="6" y="12" width="3" height="6" rx="1"/><rect x="11" y="8" width="3" height="10" rx="1"/><rect x="16" y="4" width="3" height="14" rx="1"/></svg></div>
+        <h3>经济数据分析小练习</h3>
+        <p>用 Python 做数据清洗与可视化，把原始表格变成能讲清楚的经济学结论。</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v3.5M12 17.5V21M3 12h3.5M17.5 12H21M6.2 6.2l2.5 2.5M15.3 15.3l2.5 2.5M17.8 6.2l-2.5 2.5M8.7 15.3l-2.5 2.5"/></svg></div>
+        <h3>大模型对话实验</h3>
+        <p>调用大模型 API，做一个能回答课程问题的命令行小工具。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2>联系我</h2>
+    <div class="contact">
+      <!-- 改这里：邮箱 -->
+      <a href="mailto:sijiali@fudan.edu.cn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg>
+        sijiali@fudan.edu.cn
+      </a>
+      <!-- 改这里：你的仓库或其它链接 -->
+      <a href="https://cnb.cool/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 8-5 4 5 4M15 8l5 4-5 4"/></svg>
+        我的代码仓库
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  © 2026 李思佳 · 由一份手写 HTML 构建          <!-- 改这里：名字和年份 -->
+</footer>
+
+</body>
+</html>
